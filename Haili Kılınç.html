@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Halil & Hediye | Kına Gecesi Davetiyesi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Great+Vibes&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #c9a96e;
+            --gold-light: #e8d5a3;
+            --gold-dark: #a0824a;
+            --cream: #faf6f0;
+            --cream-dark: #f0e8dc;
+            --text: #3d2b1f;
+            --text-light: #6b5a4a;
+            --kina-red: #8b1a1a;
+            --kina-deep: #4a0e0e;
+            --kina-gold: #d4a574;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: var(--cream);
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== ENVELOPE SCREEN ========== */
+        .envelope-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1a0f0a 0%, #2d1f14 50%, #1a0f0a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 1.2s ease, visibility 1.2s;
+            overflow: hidden;
+        }
+
+        .envelope-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float-particle 8s infinite;
+        }
+
+        @keyframes float-particle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Envelope container */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.02);
+        }
+
+        .envelope-wrapper.tapped {
+            animation: envelope-shake 0.5s ease;
+        }
+
+        @keyframes envelope-shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+
+        /* Envelope SVG */
+        .envelope-svg {
+            width: 280px;
+            height: 200px;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+        }
+
+        .envelope-body {
+            fill: #d4a574;
+            stroke: var(--gold);
+            stroke-width: 2;
+        }
+
+        .envelope-flap {
+            fill: #c4956a;
+            stroke: var(--gold);
+            stroke-width: 1.5;
+            transform-origin: 140px 60px;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-seal {
+            fill: var(--gold);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .envelope-heart {
+            fill: #c0392b;
+        }
+
+        /* Card inside envelope */
+        .invitation-card-preview {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px;
+            height: 160px;
+            background: linear-gradient(135deg, var(--cream) 0%, #fff 100%);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: -1;
+        }
+
+        .envelope-wrapper.open .invitation-card-preview {
+            opacity: 1;
+            transform: translate(-50%, -180%);
+            z-index: 10;
+        }
+
+        .card-preview-names {
+            font-family: 'Great Vibes', cursive;
+            font-size: 28px;
+            color: var(--gold-dark);
+        }
+
+        .card-preview-date {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* Touch text */
+        .touch-text {
+            margin-top: 40px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            color: var(--gold-light);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.8;
+            animation: pulse-text 2s infinite;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ========== INVITATION PAGES ========== */
+        .invitation-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .invitation-container.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Page 1 - Hero */
+        .page-hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            background: linear-gradient(180deg, var(--cream) 0%, #fff 50%, var(--cream) 100%);
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 200px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23c9a96e' fill-opacity='0.1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E") no-repeat top center;
+            background-size: cover;
+        }
+
+        .ornament-top {
+            width: 120px;
+            height: 60px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .names-hero {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(48px, 12vw, 80px);
+            color: var(--gold-dark);
+            line-height: 1.1;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .ampersand {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 8vw, 60px);
+            color: var(--gold);
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .date-hero {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(18px, 4vw, 24px);
+            color: var(--text);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin: 20px 0;
+        }
+
+        .quote-hero {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(16px, 3.5vw, 20px);
+            font-style: italic;
+            color: var(--text-light);
+            max-width: 500px;
+            margin: 30px auto;
+            line-height: 1.8;
+            padding: 0 20px;
+        }
+
+        .quote-hero::before,
+        .quote-hero::after {
+            content: '"';
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            color: var(--gold);
+            opacity: 0.5;
+            display: block;
+            line-height: 0.5;
+        }
+
+        .photo-area {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            margin: 30px auto;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: relative;
+            background: var(--cream-dark);
+        }
+
+        .photo-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: var(--gold);
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-hint svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--gold);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* ========== PAGE 2 - DETAILS ========== */
+        .page-details {
+            min-height: 100vh;
+            padding: 60px 20px;
+            background: linear-gradient(180deg, #fff 0%, var(--cream) 100%);
+            position: relative;
+        }
+
+        .section {
+            max-width: 600px;
+            margin: 0 auto 50px;
+            text-align: center;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(20px, 5vw, 28px);
+            color: var(--gold-dark);
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .section-divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 15px auto;
+        }
+
+        /* Countdown */
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            min-width: 70px;
+            box-shadow: 0 4px 15px rgba(201, 169, 110, 0.3);
+        }
+
+        .countdown-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+
+        /* Location & Map */
+        .location-box {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            margin: 20px 0;
+        }
+
+        .location-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .location-address {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 250px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: var(--cream-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .map-placeholder {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #25D366;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        .whatsapp-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        /* Program Flow */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            text-align: left;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--gold), var(--gold-light));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: var(--gold);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--gold);
+        }
+
+        .timeline-time {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: var(--gold-dark);
+            font-weight: 600;
+        }
+
+        .timeline-event {
+            font-size: 18px;
+            color: var(--text);
+            margin-top: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* RSVP */
+        .rsvp-section {
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+            border-radius: 20px;
+            padding: 40px 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .rsvp-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .rsvp-text {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+
+        .rsvp-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .rsvp-btn {
+            padding: 14px 32px;
+            border-radius: 50px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .rsvp-btn:hover {
+            background: white;
+            color: var(--gold-dark);
+        }
+
+        .rsvp-btn.primary {
+            background: white;
+            color: var(--gold-dark);
+        }
+
+        .rsvp-btn.primary:hover {
+            background: transparent;
+            color: white;
+        }
+
+        /* Gallery */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--cream-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: var(--gold);
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item.wide {
+            grid-column: span 2;
+            aspect-ratio: 2/1;
+        }
+
+        /* QR Code */
+        .qr-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            margin: 20px 0;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 15px;
+            background: var(--cream-dark);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-light);
+            border: 2px dashed var(--gold);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, var(--cream), #e8ddd0);
+        }
+
+        .footer-names {
+            font-family: 'Great Vibes', cursive;
+            font-size: 32px;
+            color: var(--gold-dark);
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 10px;
+        }
+
+        /* Rose petals */
+        .petal {
+            position: fixed;
+            top: -50px;
+            pointer-events: none;
+            z-index: 999;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Audio control */
+        .audio-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 100;
+            transition: transform 0.3s;
+            border: none;
+        }
+
+        .audio-control:hover {
+            transform: scale(1.1);
+        }
+
+        .audio-control svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* Fade in animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .envelope-svg {
+                width: 220px;
+                height: 160px;
+            }
+
+            .countdown-container {
+                gap: 8px;
+            }
+
+            .countdown-item {
+                padding: 10px 14px;
+                min-width: 55px;
+            }
+
+            .countdown-number {
+                font-size: 22px;
+            }
+
+            .gallery-grid {
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== ENVELOPE SCREEN ========== -->
+    <div class="envelope-screen" id="envelopeScreen">
+        <div class="particles" id="particles"></div>
+
+        <div class="envelope-wrapper" id="envelopeWrapper" onclick="openEnvelope()">
+            <!-- Card Preview (inside envelope) -->
+            <div class="invitation-card-preview">
+                <div class="card-preview-names">Halil & Hediye</div>
+                <div class="card-preview-date">16 Mayıs 2026</div>
+            </div>
+
+            <svg class="envelope-svg" viewBox="0 0 280 200">
+                <!-- Envelope body -->
+                <path class="envelope-body" d="M20,60 L260,60 L260,180 Q260,190 250,190 L30,190 Q20,190 20,180 Z"/>
+                <!-- Envelope flap -->
+                <path class="envelope-flap" id="envelopeFlap" d="M20,60 L140,140 L260,60 L260,60 L20,60 Z"/>
+                <!-- Inner shadow lines -->
+                <line x1="20" y1="60" x2="140" y2="140" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+                <line x1="260" y1="60" x2="140" y2="140" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+                <!-- Seal -->
+                <circle class="envelope-seal" cx="140" cy="135" r="18"/>
+                <path class="envelope-heart" d="M140,128 C140,128 133,122 133,128 C133,132 140,140 140,140 C140,140 147,132 147,128 C147,122 140,128 140,128 Z"/>
+            </svg>
+        </div>
+
+        <div class="touch-text">Dokun ve Aç</div>
+    </div>
+
+    <!-- ========== INVITATION PAGES ========== -->
+    <div class="invitation-container" id="invitationContainer">
+
+        <!-- PAGE 1: HERO -->
+        <section class="page-hero">
+            <svg class="ornament-top" viewBox="0 0 120 60" fill="none">
+                <path d="M60,5 C60,5 30,30 10,30 C30,30 60,55 60,55 C60,55 90,30 110,30 C90,30 60,5 60,5 Z" stroke="#c9a96e" stroke-width="1.5" fill="none"/>
+                <circle cx="60" cy="30" r="4" fill="#c9a96e"/>
+            </svg>
+
+            <div class="fade-in">
+                <div class="names-hero">
+                    Halil & Hediye
+                </div>
+            </div>
+
+            <div class="fade-in">
+                <div class="names-hero">
+                    16 Mayıs 2026
+                </div>
+            </div>
+            
+            <div class="fade-in">
+                <div class="date-hero">Kılınç Ailesi & Nur Ailesi
+            </div>
+            
+            <div class="fade-in">
+                <div class="location-name">
+                    Fatma Kılınç Hüseyin Kılınç & Melek Nur Ökkeş Nur
+                </div>
+            </div> 
+
+            <div class="fade-in">
+                <div class="quote-hero">
+                    Aşk, iki ruhun tek bir kalpte atmasıdır. Sizleri bu mutlu günümüzde aramızda görmekten onur duyarız.
+                </div>
+            </div>
+            
+            <div class="fade-in">
+                <div class="quote-hero">
+                    Hayatımın en güzel tesadüfüydü seninle karşılaşmak. Önce dünyam değiştin, sonra dünyam oldun. Şimdi ise eksik kalan tüm yanlarımı seninle tamamlamaya, her sabah senin yüzüne uyanmaya söz veriyorum. Gökyüzünün altında, şahitlerin huzurunda bir ömrü birbirimize emanet ederken, seninle bu yolculuğun en güzel durağında buluşalım istiyorum
+                </div>
+            </div>
+
+            <div class="fade-in">
+                <div class="photo-area" id="heroPhoto">
+                    <div class="photo-placeholder">👰🏻🤵🏻</div>
+                    <!-- Fotoğraf eklemek için img etiketini kullanın:
+                    <img src="fotograf.jpg" alt="Gelin & Damat">
+                    -->
+                </div>
+            </div>
+
+            <div class="scroll-hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12l7 7 7-7"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- PAGE 2: DETAILS -->
+        <section class="page-details">
+
+            <!-- Geri Sayım -->
+            <div class="section fade-in">
+                <div class="section-title">Geri Sayım</div>
+                <div class="section-divider"></div>
+                <div class="countdown-container" id="countdown">
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="days">00</span>
+                        <span class="countdown-label">Gün</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="hours">00</span>
+                        <span class="countdown-label">Saat</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="minutes">00</span>
+                        <span class="countdown-label">Dakika</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="seconds">00</span>
+                        <span class="countdown-label">Saniye</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mekan -->
+            <div class="section fade-in">
+                <div class="section-title">Mekan</div>
+                <div class="section-divider"></div>
+                <div class="location-box">
+                    <div class="location-name">Nezihe Osman Atay Ortaokulu
+</div>
+                    <div class="location-address">
+                        Hacıbaba, Farabi Sk. No:4/1, 27500 Şehitkamil/Gaziantep, Türkiye<br>
+                        GaziAntep / Şehitkamil
+                    </div>
+                    <div class="map-container">
+                        <!-- Google Maps iframe'i buraya eklenebilir -->
+                        <div class="map-placeholder">
+                            <div style="width: 100%"><iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style="border:0" allowfullscreen="" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBVizdQeh3udy11xDc5Ao2YStR2gLc-rfc&amp;q=gaziantep%20neziye%20osman&amp;maptype=roadmap&amp;zoom=17"><a href="https://www.maps.ie/create-google-map/">Embed Google Streetview</a></iframe></div>
+                        </div>
+                    </div>
+                    <a href="https://www.google.com/maps/place/Nezihe+Osman+Atay+Ortaokulu/@37.0767874,37.3868998,17z/data=!3m1!4b1!4m6!3m5!1s0x1531e403b7e4a4c3:0xdf4d86e58180d238!8m2!3d37.0767831!4d37.3894747!16s%2Fg%2F1thzxyzl?hl=tr-TR&entry=ttu&g_ep=EgoyMDI2MDUwNi4wIKXMDSoASAFQAw%3D%3D" class="whatsapp-btn" target="_blank">
+                        Google Maps Konum
+                    </a>
+                </div>
+            </div>
+
+            <!-- Program Akışı -->
+            <div class="section fade-in">
+                <div class="section-title">Program Akışı</div>
+                <div class="section-divider"></div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">12.05.2026</div>
+                        <div class="timeline-event">Çeyiz</div>
+                        <div class="timeline-desc">Çeyiz Alma Töreni</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">16.05.2026</div>
+                        <div class="timeline-event">Kına Gecesi</div>
+                        <div class="timeline-desc">Kır Düğünü</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">16.05.2026 16:00</div>
+                        <div class="timeline-event">Misafir Karşılmama</div>
+                        <div class="timeline-desc">canlı müzik</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">17.05.2026</div>
+                        <div class="timeline-event">Düğün</div>
+                        <div class="timeline-desc">son Gece Ve Son dans!</div>
+                    </div>
+                </div>
+            </div>
+           
+            <div class="fade-in">
+                <div class="quote-hero">
+                    Biliyorsun, sevmek birini her gün yeniden seçmektir. Ben seni her sabah, her zorlukta ve her neşede yeniden seçtim. Şimdi ise bu seçimi bir ömürle mühürlemek istiyorum. Adının yanına adımı, kalbinin yanına kalbimi koyduğum bu yolculukta, birleşen ellerimizin hiç ayrılmayacağı o büyük güne gidelim.
+                </div>
+            </div>
+            
+            <!-- Galeri -->
+            <div class="section fade-in">
+                <div class="section-title">Anılarımız</div>
+                <div class="section-divider"></div>
+                <div class="gallery-grid">
+                    <div class="gallery-item wide">
+                        <span></span>
+                        <img src="file:///C:/Users/CZM/Desktop/WhatsApp%20Image%202026-05-10%20at%2011.50.43.jpeg" alt="">
+                    </div>
+                    <div class="gallery-item">
+                        <span></span>
+                         <img src="file:///C:/Users/CZM/Desktop/WhatsApp%20Image%202026-05-10%20at%2014.35.49.jpeg" alt="">
+                    </div>
+                    <div class="gallery-item">
+                        <span></span>
+                        <img src="file:///C:/Users/CZM/Desktop/WhatsApp%20Image%202026-05-10%20at%2014.35.50.jpeg" alt="">
+                    </div>
+                    <div class="gallery-item">
+                        <span></span>
+                        <img src="file:///C:/Users/CZM/Desktop/WhatsApp%20Image%202026-05-10%20at%2014.35.502.jpeg" alt="">
+                    </div>
+                    <div class="gallery-item wide">
+                        <span></span>
+                        <img src="file:///C:/Users/CZM/Desktop/WhatsApp%20Image%202026-05-10%20at%2014.35.501.jpeg" alt="">
+                    </div>
+                </div>
+            </div>
+
+             <div class="fade-in">
+                <div class="quote-hero">
+                    Sen benim sadece sevdiğim değil; sığındığım limanım, en huzurlu uykum ve en neşeli sabahımsın. Biz seninle bir ev değil, bir dünya kurduk. Bu dünyada artık sadece ikimiz için çarpan tek bir kalp var. Hayat boyu sürecek o büyük 'evet'in yankısında, adımlarımızın birbirine karıştığı bu akşamda sadece sevdamızı konuşalım.
+                </div>
+            </div>
+            
+            <!-- RSVP -->
+            <div class="section fade-in">
+                <div class="rsvp-section">
+                    <div class="rsvp-title">Katılım Onayı</div>
+                    <div class="rsvp-text">
+                        Bu mutlu günümüzde sizleri aramızda görmekten<br>
+                        büyük mutluluk duyarız.
+                    </div>
+                    <div class="rsvp-buttons">
+                        <a href="https://wa.me/+905367663708?text=Merhaba%2C%20d%C3%BC%C4%9F%C3%BCn%C3%BCn%C3%BCze%20kat%C4%B1laca%C4%9F%C4%B1m%C4%B1%20bildirmek%20istiyorum!" class="rsvp-btn primary" target="_blank">
+                            ✅ Katılacağım
+                        </a>
+                        <a href="https://wa.me/+905367663708?text=Merhaba%2C%20maalesef%20d%C3%BC%C4%9F%C3%BCn%C3%BCn%C3%BCze%20kat%C4%B1lamayaca%C4%9F%C4%B1m.%20%C3%96z%20dilerim." class="rsvp-btn" target="_blank">
+                            ❌ Katılamayacağım
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-names">Halil & Hediye</div>
+            <div class="footer-text">16 Mayıs 2026 | GaziAntep</div>
+        </footer>
+
+    </div>
+
+    <!-- Audio Control -->
+    <button class="audio-control" id="audioBtn" onclick="toggleAudio()">
+        <svg id="audioIcon" viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+    </button>
+
+    <script>
+        // ========== PARTICLES ==========
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (6 + Math.random() * 4) + 's';
+                particle.style.width = (2 + Math.random() * 4) + 'px';
+                particle.style.height = particle.style.width;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // ========== ENVELOPE OPEN ==========
+        let isOpen = false;
+
+        function openEnvelope() {
+            if (isOpen) return;
+            isOpen = true;
+
+            const wrapper = document.getElementById('envelopeWrapper');
+            const screen = document.getElementById('envelopeScreen');
+            const container = document.getElementById('invitationContainer');
+
+            wrapper.classList.add('tapped');
+
+            setTimeout(() => {
+                wrapper.classList.add('open');
+
+                // Play music
+                playMusic();
+
+                setTimeout(() => {
+                    screen.classList.add('hidden');
+                    container.classList.add('visible');
+
+                    // Start rose petals
+                    startRosePetals();
+
+                    // Trigger fade-ins
+                    setTimeout(() => {
+                        document.querySelectorAll('.fade-in').forEach((el, i) => {
+                            setTimeout(() => el.classList.add('visible'), i * 200);
+                        });
+                    }, 500);
+
+                }, 1200);
+            }, 500);
+        }
+
+// ========== AUDIO ==========
+let audio = null;
+let isPlaying = false;
+
+// İnternet üzerinden telifsiz, romantik bir piyano müziği linki
+const audioSource = "https://mp3semti.com/dinle/dizi-film-muzikleri-son-yaz-sevdigim-3"; 
+
+function playMusic() {
+    if (!audio) {
+        audio = new Audio(audioSource);
+        audio.loop = true;
+        audio.volume = 0.3; // %30 ses seviyesi
+    }
+    
+    audio.play().then(() => {
+        isPlaying = true;
+        updateAudioIcon(true);
+    }).catch(e => {
+        console.log('Otomatik oynatma engellendi, kullanıcı etkileşimi bekleniyor.');
+    });
+}
+
+function toggleAudio() {
+    // Eğer audio henüz oluşturulmadıysa oluştur ve başlat
+    if (!audio) {
+        playMusic();
+        return;
+    }
+
+    if (isPlaying) {
+        audio.pause();
+        updateAudioIcon(false);
+    } else {
+        audio.play();
+        updateAudioIcon(true);
+    }
+    isPlaying = !isPlaying;
+}
+
+// İkonları değiştiren yardımcı fonksiyon (Kod kalabalığı yapmasın diye ayırdım)
+function updateAudioIcon(playing) {
+    const icon = document.getElementById('audioIcon');
+    if (playing) {
+        // Ses açık ikonu (Hoparlör dalgalı)
+         Shirley.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+    } else {
+        // Ses kapalı ikonu (Müzik notası)
+        icon.innerHTML = '<path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>';
+    }
+}
+
+        // ========== COUNTDOWN ==========
+        function updateCountdown() {
+            const weddingDate = new Date('2026-05-16T17:00:00');
+            const now = new Date();
+            const diff = weddingDate - now;
+
+            if (diff <= 0) {
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // ========== ROSE PETALS ==========
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.innerHTML = '🌸';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.fontSize = (15 + Math.random() * 15) + 'px';
+            petal.style.animationDuration = (5 + Math.random() * 5) + 's';
+            petal.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(petal);
+
+            setTimeout(() => petal.remove(), 10000);
+        }
+
+        function startRosePetals() {
+            setInterval(createPetal, 800);
+        }
+
+        // ========== SCROLL FADE IN ==========
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // ========== TOUCH FEEDBACK ==========
+        document.getElementById('envelopeWrapper').addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+
+        document.getElementById('envelopeWrapper').addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+    </script>
+
+</body>
+</html>
